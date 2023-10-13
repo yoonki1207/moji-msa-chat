@@ -8,12 +8,12 @@ import lombok.ToString;
 public class ChatMessageDto {
 
     public enum MessageType {
-        ENTER, TALK, LEAVE
+        ENTER, TALK, LEAVE, MEDIA, NOTICE
     }
 
     private MessageType messageType;
     private Long chatRoomId;
-    private Long userId;
-    private String username;
-    private String content;
+    private Long senderId;
+    private String sender;
+    private String message;
 }
