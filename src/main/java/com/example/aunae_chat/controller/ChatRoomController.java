@@ -44,8 +44,8 @@ public class ChatRoomController {
     }
 
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<ChatMessage>> getAllMessages(@PathVariable String roomId) {
-        List<ChatMessage> result = chatRoomService.findChatMessagesByRoomId(roomId);
+    public ResponseEntity<List<ChatMessage>> getLastMessages(@PathVariable Long roomId, @RequestParam(defaultValue = "20") int num) {
+        List<ChatMessage> result = chatMessageService.findLastMessages(roomId, num);
         return ResponseEntity.ok(result);
     }
 

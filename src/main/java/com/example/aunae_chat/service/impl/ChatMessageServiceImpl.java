@@ -9,7 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -35,13 +38,22 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public List<ChatMessage> findMessages(Long chatRoomId, Long idx, int num) {
         // TODO: id를 제외한 이전 채팅 num 개 반환
+        // TODO: id가 없다면 마지막 채팅 num 개 반환
         // db.chatMessages.find({idx: {$lt: 6}}).sort({idx:-1}).limit(3).sort({idx:1});
         List<ChatMessage> messages = chatMessageRepository
-                .findByChatRoomIdAndIdxLessThanOrderByIdxAsc(
+                .findByChatRoomIdAndIdxLessThanOrderByIdxDesc(
                         chatRoomId,
                         idx,
                         PageRequest.of(0, num)
                 );
+        Collections.reverse(messages);
+        return messages;
+    }
+
+    @Override
+    public List<ChatMessage> findLastMessages(Long chatRoomId, int num) {
+        List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByIdxDesc(chatRoomId, PageRequest.of(0, num));
+        Collections.reverse(messages);
         return messages;
     }
 }

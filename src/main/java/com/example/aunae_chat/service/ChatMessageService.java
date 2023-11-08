@@ -8,4 +8,5 @@ import java.util.List;
 public interface ChatMessageService {
     ChatMessageDto saveMessage(ChatMessageDto dto);
     List<ChatMessage> findMessages(Long ChatRoomId, Long idx, int num);
+    List<ChatMessage> findLastMessages(Long chatRoomId, int num);
 }

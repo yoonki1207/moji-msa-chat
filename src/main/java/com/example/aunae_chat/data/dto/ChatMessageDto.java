@@ -18,6 +18,7 @@ public class ChatMessageDto {
         ENTER, TALK, LEAVE, MEDIA, NOTICE
     }
     private String id;
+    private Long idx;
     private MessageType messageType;
     private Long chatRoomId;
     private Long senderId;
@@ -41,6 +42,7 @@ public class ChatMessageDto {
         dto.id = entity.getId();
         dto.messageType = MessageType.valueOf(entity.getMessageType()); 
         dto.chatRoomId = entity.getChatRoomId();
+        dto.idx = entity.getIdx();
         dto.senderId = Long.parseLong(entity.getSenderId());
         dto.sender = entity.getSender();
         dto.message = entity.getMessage();
