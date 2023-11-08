@@ -15,19 +15,32 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    set('springCloudVersion', "2022.0.4")
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.projectlombok:lombok:1.18.26'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    implementation 'org.projectlombok:lombok:1.18.26'
+
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+

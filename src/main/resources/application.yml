@@ -2,3 +2,10 @@
 spring:
   profiles:
     include: db
+    active: dev
+  application:
+    name: config
+  config:
+    import: optional:configserver:http://localhost:8888
+server:
+  port: 3001
