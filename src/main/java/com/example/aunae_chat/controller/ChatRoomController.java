@@ -51,8 +51,13 @@ public class ChatRoomController {
     }
 
     @GetMapping("/room/{roomId}/messages")
-    public ResponseEntity<List<ChatMessage>> getMessagesById(@PathVariable Long roomId, @RequestParam Long idx, @RequestParam(defaultValue = "3") int num) {
-        List<ChatMessage> messages = chatMessageService.findMessages(roomId, idx, num);
+    public ResponseEntity<List<ChatMessage>> getMessagesById(@PathVariable Long roomId, @RequestParam Long idx, @RequestParam(defaultValue = "20") int num) {
+        List<ChatMessage> messages;
+        if(idx == null) {
+            messages = chatMessageService.findLastMessages(roomId, num);
+        } else {
+            messages = chatMessageService.findMessages(roomId, idx, num);
+        }
         return ResponseEntity.of(Optional.ofNullable(messages));
     }
 }

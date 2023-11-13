@@ -37,8 +37,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public List<ChatMessage> findMessages(Long chatRoomId, Long idx, int num) {
-        // TODO: id를 제외한 이전 채팅 num 개 반환
-        // TODO: id가 없다면 마지막 채팅 num 개 반환
         // db.chatMessages.find({idx: {$lt: 6}}).sort({idx:-1}).limit(3).sort({idx:1});
         List<ChatMessage> messages = chatMessageRepository
                 .findByChatRoomIdAndIdxLessThanOrderByIdxDesc(
