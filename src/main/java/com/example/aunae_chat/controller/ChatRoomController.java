@@ -32,6 +32,7 @@ public class ChatRoomController {
         return ResponseEntity.ok("Invalid url.");
     }
 
+    // TODO: 사용자가 참여한 채팅방만 조회 가능
     @GetMapping("/room")
     public ResponseEntity<List<ChatRoom>> getChatRooms() {
         List<ChatRoom> allRoom = chatRoomService.findAllRoom();
