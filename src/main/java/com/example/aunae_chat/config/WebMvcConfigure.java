@@ -24,4 +24,6 @@ public class WebMvcConfigure implements WebMvcConfigurer {
 //        registry.addMapping("/**").allowedOrigins("http://moji....");
 //        WebMvcConfigurer.super.addCorsMappings(registry);
     }
+
+
 }

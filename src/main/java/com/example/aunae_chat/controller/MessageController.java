@@ -27,18 +27,13 @@ public class MessageController {
      */
     @MessageMapping("/chat/message")
     public void enter(SimpMessageHeaderAccessor accessor, ChatMessageDto messageDto) {
-        Long senderId = (Long) accessor.getSessionAttributes().get("id");
-        String senderName = (String) accessor.getSessionAttributes().get("name");
-
-        log.info("Message: {}", messageDto.toString());
-
-        if(senderId == null || senderName == null) {
-            return;
-        }
-
-        // set sender data with session
-        messageDto.setSenderId(senderId);
-        messageDto.setSender(senderName);
+//        Long senderId = (Long) accessor.getSessionAttributes().get("id");
+//        String senderName = (String) accessor.getSessionAttributes().get("name");
+//
+//
+//        // set sender data with session
+//        messageDto.setSenderId(senderId);
+//        messageDto.setSender(senderName);
 
         // TODO: 방 확인 후 존재하면 입장 메시지 전송, else 무시
         if (ChatMessageDto.MessageType.ENTER.equals(messageDto.getMessageType())) {

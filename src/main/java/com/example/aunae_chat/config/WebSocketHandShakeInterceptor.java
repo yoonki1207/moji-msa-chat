@@ -12,10 +12,9 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
 
-@Component
+//@Component
 @Slf4j
 public class WebSocketHandShakeInterceptor extends HttpSessionHandshakeInterceptor {
     private final AuthorizationExtractor authExtractor;
@@ -24,6 +23,7 @@ public class WebSocketHandShakeInterceptor extends HttpSessionHandshakeIntercept
         this.authExtractor = authExtractor;
     }
 
+
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         if (request instanceof ServletServerHttpRequest) {
@@ -31,6 +31,7 @@ public class WebSocketHandShakeInterceptor extends HttpSessionHandshakeIntercept
             HttpServletRequest servletRequest = servletServerRequest.getServletRequest();
 
             String token = authExtractor.extract(servletRequest, "Bearer");
+            log.info("before handshake token: {}", token);
             if (token == null || "".equals(token)) {
                 return true;
             }
@@ -44,9 +45,8 @@ public class WebSocketHandShakeInterceptor extends HttpSessionHandshakeIntercept
             Map<String, Object> jsonArray = jsonParser.parseMap(decode);
 
             // assert user is valid
-
             // TODO: attributes 에 name 혹은 nickname 있어야함.
-            attributes.put("name", jsonArray.get("email"));
+            attributes.put("name", jsonArray.get("name"));
             attributes.put("id", jsonArray.get("id"));
             attributes.put("email", jsonArray.get("email"));
             attributes.put("roles", jsonArray.get("roles"));
@@ -56,6 +56,7 @@ public class WebSocketHandShakeInterceptor extends HttpSessionHandshakeIntercept
 
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception ex) {
+        log.info("after handshake: ");
         super.afterHandshake(request, response, wsHandler, ex);
     }
 }

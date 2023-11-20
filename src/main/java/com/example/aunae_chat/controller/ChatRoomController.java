@@ -2,10 +2,8 @@ package com.example.aunae_chat.controller;
 
 import com.example.aunae_chat.data.documents.ChatMessage;
 import com.example.aunae_chat.data.documents.ChatRoom;
-import com.example.aunae_chat.data.dto.ChatMessageDto;
 import com.example.aunae_chat.service.ChatMessageService;
 import com.example.aunae_chat.service.ChatRoomService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
