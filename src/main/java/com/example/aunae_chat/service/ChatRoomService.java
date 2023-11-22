@@ -10,7 +10,7 @@ public interface ChatRoomService {
     List<ChatMessage> findChatMessagesByRoomId(String roomId);
     ChatRoom findById(String roomId);
     ChatRoom joinRoom(Long chatRoomId, Long userId, String username);
-    ChatRoom createRoom(String name, Long userId, String imageUrl);
+    ChatRoom createRoom(String name, Long userId, String imageUrl, Long bungaeId);
     ChatRoom findChatRoomByChatRoomId(Long chatRoomId);
     List<ChatRoom> findChatRoomByUser(Long userId);
 }

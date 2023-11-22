@@ -50,11 +50,15 @@ public class ChatRoomController {
      * @return 방
      */
     @PostMapping("/room")
-    public ResponseEntity<ChatRoom> createRoom(@RequestParam String name, HttpServletRequest request, @RequestParam(defaultValue = "null") String imageUrl) {
+    public ResponseEntity<ChatRoom> createRoom(
+            @RequestParam String name,
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "null") String imageUrl,
+            @RequestParam Long bungaeId) {
         Long userId = (Long)request.getAttribute("id");
         String username = (String) request.getAttribute("name");
         log.info("createRoom: {}", userId);
-        ChatRoom room = chatRoomService.createRoom(name, userId, imageUrl);
+        ChatRoom room = chatRoomService.createRoom(name, userId, imageUrl, bungaeId);
         chatRoomService.joinRoom(room.getChatRoomId(), userId, username);
 
         return ResponseEntity.ok(room);

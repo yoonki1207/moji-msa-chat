@@ -61,8 +61,14 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
-    public ChatRoom createRoom(String name, Long userId, String imageUrl) {
-        ChatRoom chatRoom = ChatRoom.create(name, sequenceGeneratorService.generateSequence(ChatRoom.SEQUENCE_NAME), imageUrl);
+    public ChatRoom createRoom(String name, Long userId, String imageUrl, Long bungaeId) {
+        ChatRoom chatRoom =
+                ChatRoom.create(
+                        name,
+                        sequenceGeneratorService.generateSequence(ChatRoom.SEQUENCE_NAME),
+                        imageUrl,
+                        bungaeId
+                );
         ChatRoom save = chatRoomRepository.save(chatRoom);
         log.info(save.toString());
         return save;

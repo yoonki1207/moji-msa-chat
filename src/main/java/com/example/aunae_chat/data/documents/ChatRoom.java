@@ -21,14 +21,16 @@ public class ChatRoom {
     @Id
     private String id;
     private Long chatRoomId;
+    private Long bungaeId;
     private String roomName;
     private String imageUrl;
     private List<User> users;
 
-    public static ChatRoom create(String name, Long chatRoomId, String imageUrl) {
+    public static ChatRoom create(String name, Long chatRoomId, String imageUrl, Long bungaeId) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setChatRoomId(chatRoomId);
         chatRoom.setRoomName(name);
+        chatRoom.setBungaeId(bungaeId);
         chatRoom.setImageUrl(imageUrl);
         chatRoom.setUsers(new ArrayList<>());
         return chatRoom;
