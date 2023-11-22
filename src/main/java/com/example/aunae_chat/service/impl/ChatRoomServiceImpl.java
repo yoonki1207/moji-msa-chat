@@ -2,6 +2,7 @@ package com.example.aunae_chat.service.impl;
 
 import com.example.aunae_chat.data.documents.ChatMessage;
 import com.example.aunae_chat.data.documents.ChatRoom;
+import com.example.aunae_chat.data.domain.User;
 import com.example.aunae_chat.repository.ChatMessageRepository;
 import com.example.aunae_chat.repository.ChatRoomRepository;
 import com.example.aunae_chat.service.ChatRoomService;
@@ -20,10 +21,13 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
+    private final SequenceGeneratorService sequenceGeneratorService;
+
     @Autowired
-    public ChatRoomServiceImpl(ChatRoomRepository chatRoomRepository, ChatMessageRepository chatMessageRepository) {
+    public ChatRoomServiceImpl(ChatRoomRepository chatRoomRepository, ChatMessageRepository chatMessageRepository, SequenceGeneratorService sequenceGeneratorService) {
         this.chatRoomRepository = chatRoomRepository;
         this.chatMessageRepository = chatMessageRepository;
+        this.sequenceGeneratorService = sequenceGeneratorService;
     }
 
     public List<ChatRoom> findAllRoom() {
@@ -46,10 +50,31 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         );
     }
 
-    public ChatRoom createRoom(String name) {
-        ChatRoom chatRoom = ChatRoom.create(name);
+    @Override
+    public ChatRoom joinRoom(Long chatRoomId, Long userId, String username) {
+        ChatRoom chatRoom = chatRoomRepository.findByChatRoomId(chatRoomId).orElseThrow(() -> new RuntimeException("joinRoom error"));
+        List<User> users = chatRoom.getUsers();
+        User addUser = User.builder().userId(userId).username(username).build();
+        users.add(addUser);
+        chatRoom.setUsers(users);
+        return chatRoomRepository.save(chatRoom);
+    }
+
+    @Override
+    public ChatRoom createRoom(String name, Long userId, String imageUrl) {
+        ChatRoom chatRoom = ChatRoom.create(name, sequenceGeneratorService.generateSequence(ChatRoom.SEQUENCE_NAME), imageUrl);
         ChatRoom save = chatRoomRepository.save(chatRoom);
         log.info(save.toString());
         return save;
+    }
+
+    @Override
+    public ChatRoom findChatRoomByChatRoomId(Long chatRoomId) {
+        return chatRoomRepository.findByChatRoomId(chatRoomId).orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
+    }
+
+    @Override
+    public List<ChatRoom> findChatRoomByUser(Long userId) {
+        return chatRoomRepository.findByUsers_UserId(userId);
     }
 }

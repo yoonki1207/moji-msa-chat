@@ -9,5 +9,8 @@ public interface ChatRoomService {
     List<ChatRoom> findAllRoom();
     List<ChatMessage> findChatMessagesByRoomId(String roomId);
     ChatRoom findById(String roomId);
-    ChatRoom createRoom(String name);
+    ChatRoom joinRoom(Long chatRoomId, Long userId, String username);
+    ChatRoom createRoom(String name, Long userId, String imageUrl);
+    ChatRoom findChatRoomByChatRoomId(Long chatRoomId);
+    List<ChatRoom> findChatRoomByUser(Long userId);
 }

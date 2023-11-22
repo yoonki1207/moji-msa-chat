@@ -22,24 +22,24 @@ public class BearerAuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-//        log.info(">>> interceptor.preHandle 호출");
-//        String token = authExtractor.extract(request, "Bearer");
-//        if (token == null || "".equals(token)) {
-//            return true;
-//        }
-//        log.info(">>> token: {}", token);
-//        String[] chunks = token.split("\\.");
-//        Base64.Decoder decoder = Base64.getUrlDecoder();
-//
-//        // decode payload
-//        String decode = new String(decoder.decode(chunks[1]));
-//        JsonParser jsonParser = new BasicJsonParser();
-//        Map<String, Object> jsonArray = jsonParser.parseMap(decode);
-//        log.info(">>> 유저 정보: {}", jsonArray);
-//        request.setAttribute("name", jsonArray.get("name"));
-//        request.setAttribute("id", jsonArray.get("id"));
-//        request.setAttribute("email", jsonArray.get("email"));
-//        request.setAttribute("roles", jsonArray.get("roles"));
+        log.info(">>> interceptor.preHandle 호출");
+        String token = authExtractor.extract(request, "Bearer");
+        if (token == null || "".equals(token)) {
+            return true;
+        }
+        log.info(">>> token: {}", token);
+        String[] chunks = token.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+
+        // decode payload
+        String decode = new String(decoder.decode(chunks[1]));
+        JsonParser jsonParser = new BasicJsonParser();
+        Map<String, Object> jsonArray = jsonParser.parseMap(decode);
+        log.info(">>> 유저 정보: {}", jsonArray);
+        request.setAttribute("name", jsonArray.get("name"));
+        request.setAttribute("id", jsonArray.get("id"));
+        request.setAttribute("email", jsonArray.get("email"));
+        request.setAttribute("roles", jsonArray.get("roles"));
         return true;
     }
 }
