@@ -91,15 +91,14 @@ public class ChatRoomController {
     }
 
     /**
-     * 마지막 메시지 n개 가져오기
+     * 채팅방 정보 가져오기
      * @param roomId
-     * @param num
      * @return
      */
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<ChatMessage>> getLastMessages(@PathVariable Long roomId, @RequestParam(defaultValue = "20") int num) {
-        List<ChatMessage> result = chatMessageService.findLastMessages(roomId, num);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ChatRoom> getLastMessages(@PathVariable Long roomId) {
+        ChatRoom room = chatRoomService.findChatRoomByChatRoomId(roomId);
+        return ResponseEntity.ok(room);
     }
 
     /**
@@ -110,7 +109,7 @@ public class ChatRoomController {
      * @return
      */
     @GetMapping("/room/{roomId}/messages")
-    public ResponseEntity<List<ChatMessage>> getMessagesById(@PathVariable Long roomId, @RequestParam Long idx, @RequestParam(defaultValue = "20") int num) {
+    public ResponseEntity<List<ChatMessage>> getMessagesById(@PathVariable Long roomId, @RequestParam(required = false) Long idx, @RequestParam(defaultValue = "20") int num) {
         List<ChatMessage> messages;
         if(idx == null) {
             messages = chatMessageService.findLastMessages(roomId, num);
