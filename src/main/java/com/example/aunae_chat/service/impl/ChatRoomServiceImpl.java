@@ -61,6 +61,16 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
+    public ChatRoom joinRoomByBungaeId(Long bungaeId, Long userId, String username) {
+        ChatRoom chatRoom = chatRoomRepository.findByBungaeId(bungaeId).orElseThrow(() -> new RuntimeException("joinRoom error"));
+        List<User> users = chatRoom.getUsers();
+        User addUser = User.builder().userId(userId).username(username).build();
+        users.add(addUser);
+        chatRoom.setUsers(users);
+        return chatRoomRepository.save(chatRoom);
+    }
+
+    @Override
     public ChatRoom createRoom(String name, Long userId, String imageUrl, Long bungaeId) {
         ChatRoom chatRoom =
                 ChatRoom.create(

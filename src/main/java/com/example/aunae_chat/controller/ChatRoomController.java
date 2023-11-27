@@ -66,15 +66,15 @@ public class ChatRoomController {
 
     /**
      * 방 참가. 방을 참가해야 리스닝 가능.
-     * @param roomId 방 아이디
+     * @param bungaeId 방 아이디
      * @param request token
      * @return
      */
-    @PostMapping("/room/{roomId}")
-    public ResponseEntity<ChatRoom> joinRoom(@PathVariable Long roomId, HttpServletRequest request) {
+    @PostMapping("/room/{bungaeId}")
+    public ResponseEntity<ChatRoom> joinRoom(@PathVariable Long bungaeId, HttpServletRequest request) {
         Long userId = (Long)request.getAttribute("id");
         String username = (String) request.getAttribute("name");
-        ChatRoom chatRoom = chatRoomService.joinRoom(roomId, userId, username);
+        ChatRoom chatRoom = chatRoomService.joinRoomByBungaeId(bungaeId, userId, username);
         return ResponseEntity.ok(chatRoom);
     }
 
