@@ -43,23 +43,46 @@ public class MessageController {
         ChatRoom room = chatRoomService.findChatRoomByChatRoomId(roomId);
         Assert.notNull(room, "Room은 null일 수 없습니다.");
         log.info("Room and message: {}, {}", room.getChatRoomId(), messageDto.getMessage());
-        // TODO: 방 확인 후 존재하면 입장 메시지 전송, else 무시
-        if (ChatMessageDto.MessageType.ENTER.equals(messageDto.getMessageType())) {
-            boolean chatRoomInUser = chatRoomService.isChatRoomInUser(messageDto.getSenderId(), messageDto.getChatRoomId());
-            if(!chatRoomInUser) {
-                messageDto.setMessage(messageDto.getSender() + "님이 입장하였습니다.");
+        switch(messageDto.getMessageType()) {
+            case ENTER -> {
+                sendEnterMessage(messageDto);
+            }
+            case TALK -> {
+                sendMessage(messageDto);
+            }
+            case LEAVE -> {
+            }
+            case MEDIA -> {
+            }
+            case NOTICE -> {
+                sendNoticeMessage(messageDto);
             }
         }
+    }
 
-        // 메시지 보내기
-        if (ChatMessageDto.MessageType.TALK.equals(messageDto.getMessageType())) {
-            // 메시지 DB에 저장
-            ChatMessageDto savedMessageDto = chatMessageService.saveMessage(messageDto);
-
-            // TODO: 멘션이 포함되어있는지 확인 후 푸쉬 알람 요청
-
-            // 메시지 뿌리기
-            sendingOperations.convertAndSend("/topic/chat/room/" + roomId, savedMessageDto);
+    public void sendEnterMessage(ChatMessageDto messageDto) {
+        boolean chatRoomInUser = chatRoomService.isChatRoomInUser(messageDto.getSenderId(), messageDto.getChatRoomId());
+        if(!chatRoomInUser) {
+            messageDto.setMessage(messageDto.getSender() + "님이 입장하였습니다.");
         }
+    }
+
+    public void sendNoticeMessage(ChatMessageDto messageDto) {
+        // TODO: '@@'로 분리하여 좌측은 Title, 우측은 Content 로 저장.
+        String message = messageDto.getMessage();
+        String[] split = message.split("@@"); // split말고 첫 @@만 분리
+    }
+
+    public void sendMessage(ChatMessageDto messageDto) {
+        Long roomId = messageDto.getChatRoomId();
+
+        // 메시지 DB에 저장
+        ChatMessageDto savedMessageDto = chatMessageService.saveMessage(messageDto);
+
+        // TODO: 멘션이 포함되어있는지 확인 후 푸쉬 알람 요청
+
+        // 메시지 뿌리기
+        sendingOperations.convertAndSend("/topic/chat/room/" + roomId, savedMessageDto);
+
     }
 }
