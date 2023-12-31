@@ -93,4 +93,14 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     public List<ChatRoom> findChatRoomByUser(Long userId) {
         return chatRoomRepository.findByUsers_UserId(userId);
     }
+
+    @Override
+    public boolean isChatRoomInUser(Long userId, Long roomId) {
+        ChatRoom chatRoom = chatRoomRepository.findByChatRoomId(roomId).orElseThrow(() -> new RuntimeException("Error from findChatRoomInUser"));
+        List<User> users = chatRoom.getUsers();
+        User user = users.stream().filter(_user -> _user.getUserId().equals(userId))
+                .findFirst()
+                .orElse(null);
+        return user != null;
+    }
 }

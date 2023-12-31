@@ -45,9 +45,21 @@ public class MessageController {
 
         // TODO: 방 확인 후 존재하면 입장 메시지 전송, else 무시
         if (ChatMessageDto.MessageType.ENTER.equals(messageDto.getMessageType())) {
-            messageDto.setMessage(messageDto.getSender() + "님이 입장하였습니다.");
+            boolean chatRoomInUser = chatRoomService.isChatRoomInUser(messageDto.getSenderId(), messageDto.getChatRoomId());
+            if(!chatRoomInUser) {
+                messageDto.setMessage(messageDto.getSender() + "님이 입장하였습니다.");
+            }
         }
-        ChatMessageDto savedMessageDto = chatMessageService.saveMessage(messageDto);
-        sendingOperations.convertAndSend("/topic/chat/room/" + roomId, savedMessageDto);
+
+        // 메시지 보내기
+        if (ChatMessageDto.MessageType.TALK.equals(messageDto.getMessageType())) {
+            // 메시지 DB에 저장
+            ChatMessageDto savedMessageDto = chatMessageService.saveMessage(messageDto);
+
+            // TODO: 멘션이 포함되어있는지 확인 후 푸쉬 알람 요청
+
+            // 메시지 뿌리기
+            sendingOperations.convertAndSend("/topic/chat/room/" + roomId, savedMessageDto);
+        }
     }
 }
