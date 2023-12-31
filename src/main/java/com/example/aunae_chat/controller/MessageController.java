@@ -42,7 +42,7 @@ public class MessageController {
         Long roomId = messageDto.getChatRoomId();
         ChatRoom room = chatRoomService.findChatRoomByChatRoomId(roomId);
         Assert.notNull(room, "Room은 null일 수 없습니다.");
-
+        log.info("Room and message: {}, {}", room.getChatRoomId(), messageDto.getMessage());
         // TODO: 방 확인 후 존재하면 입장 메시지 전송, else 무시
         if (ChatMessageDto.MessageType.ENTER.equals(messageDto.getMessageType())) {
             boolean chatRoomInUser = chatRoomService.isChatRoomInUser(messageDto.getSenderId(), messageDto.getChatRoomId());

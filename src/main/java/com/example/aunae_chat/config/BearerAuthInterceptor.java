@@ -5,19 +5,43 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.boot.json.JsonParser;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.util.Base64;
 import java.util.Map;
 
 @Component
 @Slf4j
-public class BearerAuthInterceptor implements HandlerInterceptor {
+public class BearerAuthInterceptor implements HandlerInterceptor, ChannelInterceptor {
     private final AuthorizationExtractor authExtractor;
 
     public BearerAuthInterceptor(AuthorizationExtractor authExtractor) {
         this.authExtractor = authExtractor;
+    }
+
+    @Override
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
+
+        log.info("full message: {}", message);
+        log.info("auth: {}", headerAccessor.getNativeHeader("Authorization"));
+
+        if (StompCommand.CONNECT.equals(headerAccessor.getCommand())) {
+            log.info("msg: Connected");
+        }
+
+        return ChannelInterceptor.super.preSend(message, channel);
     }
 
     @Override
