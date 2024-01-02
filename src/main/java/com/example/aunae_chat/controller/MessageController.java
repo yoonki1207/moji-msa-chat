@@ -68,9 +68,16 @@ public class MessageController {
     }
 
     public void sendNoticeMessage(ChatMessageDto messageDto) {
-        // TODO: '@@'로 분리하여 좌측은 Title, 우측은 Content 로 저장.
-        String message = messageDto.getMessage();
-        String[] split = message.split("@@"); // split말고 첫 @@만 분리
+//        final String separator = "@@";
+//        String message = messageDto.getMessage();
+//        int index = message.indexOf(separator);
+//        if(index < 0) {
+//            return;
+//        }
+//        String title = message.substring(0, index);
+//        String content = message.substring(index + separator.length());
+
+        sendMessage(messageDto);
     }
 
     public void sendMessage(ChatMessageDto messageDto) {
@@ -83,6 +90,5 @@ public class MessageController {
 
         // 메시지 뿌리기
         sendingOperations.convertAndSend("/topic/chat/room/" + roomId, savedMessageDto);
-
     }
 }
