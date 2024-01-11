@@ -13,6 +13,11 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * prefix `/app`
  */
@@ -80,13 +85,27 @@ public class MessageController {
         sendMessage(messageDto);
     }
 
+    public List<String> getMentionedUserId(String message) {
+        List<String> allMatchers = new ArrayList<>();
+        Matcher m = Pattern.compile("@\\{([0-9]+)};")
+                .matcher(message);
+        while(m.find()) {
+            allMatchers.add(m.group(1));
+        }
+        return allMatchers;
+    }
+
     public void sendMessage(ChatMessageDto messageDto) {
         Long roomId = messageDto.getChatRoomId();
 
         // 메시지 DB에 저장
         ChatMessageDto savedMessageDto = chatMessageService.saveMessage(messageDto);
 
-        // TODO: 멘션이 포함되어있는지 확인 후 푸쉬 알람 요청
+        List<String> userIdList = getMentionedUserId(savedMessageDto.getMessage());
+        if(userIdList.size() > 0) {
+            // TODO: push 알림 보내기
+
+        }
 
         // 메시지 뿌리기
         sendingOperations.convertAndSend("/topic/chat/room/" + roomId, savedMessageDto);
