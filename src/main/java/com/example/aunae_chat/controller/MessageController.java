@@ -87,10 +87,10 @@ public class MessageController {
 
     public List<String> getMentionedUserId(String message) {
         List<String> allMatchers = new ArrayList<>();
-        Matcher m = Pattern.compile("@\\{([0-9]+)};")
+        Matcher m = Pattern.compile("@\\[([\\w|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]+)]\\(([0-9]+)\\)")
                 .matcher(message);
         while(m.find()) {
-            allMatchers.add(m.group(1));
+            allMatchers.add(m.group(2)); // 이름, group(2)는 id
         }
         return allMatchers;
     }
