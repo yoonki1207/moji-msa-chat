@@ -3,8 +3,11 @@ package com.example.aunae_chat.controller;
 import com.example.aunae_chat.data.documents.ChatMessage;
 import com.example.aunae_chat.data.documents.ChatRoom;
 import com.example.aunae_chat.data.dto.ChatMessageDto;
+import com.example.aunae_chat.data.dto.NoticeMessageDto;
 import com.example.aunae_chat.service.ChatMessageService;
 import com.example.aunae_chat.service.ChatRoomService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,13 +33,14 @@ public class MessageController {
     private final SimpMessageSendingOperations sendingOperations;
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
+    private final ObjectMapper mapper;
 
     /**
      * Receive message
      * @param messageDto Message DTO
      */
     @MessageMapping("/chat/message")
-    public void enter(SimpMessageHeaderAccessor accessor, ChatMessageDto messageDto) {
+    public void enter(SimpMessageHeaderAccessor accessor, ChatMessageDto messageDto) throws JsonProcessingException {
 //        Long senderId = (Long) accessor.getSessionAttributes().get("id");
 //        String senderName = (String) accessor.getSessionAttributes().get("name");
 //
@@ -69,19 +74,14 @@ public class MessageController {
         boolean chatRoomInUser = chatRoomService.isChatRoomInUser(messageDto.getSenderId(), messageDto.getChatRoomId());
         if(!chatRoomInUser) {
             messageDto.setMessage(messageDto.getSender() + "님이 입장하였습니다.");
+            sendMessage(messageDto);
         }
     }
 
-    public void sendNoticeMessage(ChatMessageDto messageDto) {
-//        final String separator = "@@";
-//        String message = messageDto.getMessage();
-//        int index = message.indexOf(separator);
-//        if(index < 0) {
-//            return;
-//        }
-//        String title = message.substring(0, index);
-//        String content = message.substring(index + separator.length());
-
+    public void sendNoticeMessage(ChatMessageDto messageDto) throws JsonProcessingException {
+        String json = messageDto.getMessage();
+        NoticeMessageDto noticeMessageDto = mapper.readValue(json, NoticeMessageDto.class);
+        // push 알림
         sendMessage(messageDto);
     }
 
