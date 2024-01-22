@@ -79,6 +79,19 @@ public class ChatRoomController {
     }
 
     /**
+     * 방 퇴장.
+     * @param bungaeId 번개 아이디
+     * @param request token
+     * @return
+     */
+    @DeleteMapping("/room/{bungaeId}")
+    public ResponseEntity<ChatRoom> exitRoom(@PathVariable Long bungaeId, HttpServletRequest request, @RequestParam Long userId) {
+        log.info("EXIT ROOM: user \"{}\" trying to kick user \"{}\"", request.getAttribute("id"), userId);
+        ChatRoom chatRoom = chatRoomService.exitRoomByBungaeId(bungaeId, userId);
+        return ResponseEntity.ok(chatRoom);
+    }
+
+    /**
      * 본인이 참가한 채팅방들 얻기
      * @param request
      * @return 방 list
