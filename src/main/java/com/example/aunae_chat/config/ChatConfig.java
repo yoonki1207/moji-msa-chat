@@ -13,7 +13,7 @@ public class ChatConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws/chat")
-                .setAllowedOrigins("http://localhost:3000")
+//                .setAllowedOrigins("http://localhost:3000")
                 .setAllowedOriginPatterns("*").withSockJS().setSuppressCors(true);
     }
 
