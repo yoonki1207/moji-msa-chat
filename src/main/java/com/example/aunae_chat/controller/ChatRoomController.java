@@ -33,7 +33,6 @@ public class ChatRoomController {
         return ResponseEntity.ok("Invalid url.");
     }
 
-    // TODO: 사용자가 참여한 채팅방만 조회 가능
     @GetMapping("/room")
     public ResponseEntity<List<ChatRoom>> getChatRooms(HttpServletRequest request) {
         String username = (String)request.getAttribute("name");
@@ -66,15 +65,15 @@ public class ChatRoomController {
 
     /**
      * 방 참가. 방을 참가해야 리스닝 가능.
-     * @param bungaeId 방 아이디
+     * @param roomId 방 아이디
      * @param request token
      * @return
      */
-    @PostMapping("/room/{bungaeId}")
-    public ResponseEntity<ChatRoom> joinRoom(@PathVariable Long bungaeId, HttpServletRequest request) {
+    @PostMapping("/room/{roomId}")
+    public ResponseEntity<ChatRoom> joinRoom(@PathVariable Long roomId, HttpServletRequest request) {
         Long userId = (Long)request.getAttribute("id");
         String username = (String) request.getAttribute("name");
-        ChatRoom chatRoom = chatRoomService.joinRoomByBungaeId(bungaeId, userId, username);
+        ChatRoom chatRoom = chatRoomService.joinRoom(roomId, userId, username);
         return ResponseEntity.ok(chatRoom);
     }
 
@@ -96,11 +95,33 @@ public class ChatRoomController {
      * @param request
      * @return 방 list
      */
-    @GetMapping("/room-joined")
-    public ResponseEntity<List<ChatRoom>> getRoomsAuth(HttpServletRequest request) {
+    @GetMapping("/room/entered")
+    public ResponseEntity<List<ChatRoom>> getRoomsJoined(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("id");
         List<ChatRoom> chatRoomByUser = chatRoomService.findChatRoomByUser(userId);
         return ResponseEntity.ok(chatRoomByUser);
+    }
+
+    /**
+     * 본인이 미참여한 채팅방 리스트
+     * @param request
+     * @return
+     */
+    @GetMapping("/room/not-entered")
+    public ResponseEntity<List<ChatRoom>> getRoomsNotJoined(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("id");
+        List<ChatRoom> chatRoomByUser = chatRoomService.findChatRoomByUserNotPresent(userId);
+        return ResponseEntity.ok(chatRoomByUser);
+    }
+
+    /**
+     * 채팅방에 참여한 유저 리스트
+     *
+     */
+    @GetMapping("/room/{roomId}/users")
+    public ResponseEntity<ChatRoom> getChatRoom(@PathVariable Long roomId, HttpServletRequest request) {
+        ChatRoom chatRoom = chatRoomService.findChatRoomByChatRoomId(roomId);
+        return ResponseEntity.ok(chatRoom);
     }
 
     /**
