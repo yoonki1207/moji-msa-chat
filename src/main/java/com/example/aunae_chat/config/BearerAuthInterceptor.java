@@ -39,6 +39,7 @@ public class BearerAuthInterceptor implements HandlerInterceptor, ChannelInterce
 
         if (StompCommand.CONNECT.equals(headerAccessor.getCommand())) {
             log.info("msg: Connected");
+            // TODO: user validation logic. check the room has user
         }
 
         return ChannelInterceptor.super.preSend(message, channel);
@@ -51,19 +52,21 @@ public class BearerAuthInterceptor implements HandlerInterceptor, ChannelInterce
         if (token == null || "".equals(token)) {
             return true;
         }
-        log.info(">>> token: {}", token);
+        Map<String, Object> jsonArray = getPayload(token);
+        request.setAttribute("name", jsonArray.get("name"));
+        request.setAttribute("id", jsonArray.get("id"));
+        request.setAttribute("email", jsonArray.get("email"));
+        request.setAttribute("roles", jsonArray.get("roles"));
+        return true;
+    }
+
+    public Map<String, Object> getPayload(String token) {
         String[] chunks = token.split("\\.");
         Base64.Decoder decoder = Base64.getUrlDecoder();
 
         // decode payload
         String decode = new String(decoder.decode(chunks[1]));
         JsonParser jsonParser = new BasicJsonParser();
-        Map<String, Object> jsonArray = jsonParser.parseMap(decode);
-        log.info(">>> 유저 정보: {}", jsonArray);
-        request.setAttribute("name", jsonArray.get("name"));
-        request.setAttribute("id", jsonArray.get("id"));
-        request.setAttribute("email", jsonArray.get("email"));
-        request.setAttribute("roles", jsonArray.get("roles"));
-        return true;
+        return jsonParser.parseMap(decode);
     }
 }
