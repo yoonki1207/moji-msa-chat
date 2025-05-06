@@ -15,5 +15,6 @@ public interface ChatRoomService {
     ChatRoom createRoom(String name, Long userId, String imageUrl, Long bungaeId);
     ChatRoom findChatRoomByChatRoomId(Long chatRoomId);
     List<ChatRoom> findChatRoomByUser(Long userId);
+    List<ChatRoom> findChatRoomByUserNotPresent(Long userId);
     boolean isChatRoomInUser(Long userId, Long roomId);
 }

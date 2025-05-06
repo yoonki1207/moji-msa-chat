@@ -108,6 +108,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
+    public List<ChatRoom> findChatRoomByUserNotPresent(Long userId) {
+        return chatRoomRepository.findAllByUserIdNotPresent(userId);
+    }
+
+    @Override
     public boolean isChatRoomInUser(Long userId, Long roomId) {
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomId(roomId).orElseThrow(() -> new RuntimeException("Error from findChatRoomInUser"));
         List<User> users = chatRoom.getUsers();
