@@ -55,8 +55,10 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomId(chatRoomId).orElseThrow(() -> new RuntimeException("joinRoom error"));
         List<User> users = chatRoom.getUsers();
         User addUser = User.builder().userId(userId).username(username).build();
-        users.add(addUser);
-        chatRoom.setUsers(users);
+        if(!users.contains(addUser)) {
+            users.add(addUser);
+            chatRoom.setUsers(users);
+        }
         return chatRoomRepository.save(chatRoom);
     }
 
