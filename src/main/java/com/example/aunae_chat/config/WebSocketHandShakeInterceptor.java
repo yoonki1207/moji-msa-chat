@@ -14,7 +14,7 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 import java.util.Base64;
 import java.util.Map;
 
-//@Component
+@Component
 @Slf4j
 public class WebSocketHandShakeInterceptor extends HttpSessionHandshakeInterceptor {
     private final AuthorizationExtractor authExtractor;
