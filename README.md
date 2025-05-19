@@ -16,7 +16,6 @@
 - Language: Java 17
 - Framework: Spring Boot 3.1.4
 - Database: MongoDB 2.1.3
-- Container: Docker 27.1.1
 
 ## 📦 기술 명세
 API 문서는 [팀 Notion](https://www.notion.so/yoonki1207/MOJI-API-1e5a3b67e4c9807b91b3c99996fc9342?pvs=4)에 명시되어있습니다.
@@ -39,3 +38,28 @@ jwt:
 
 > [!NOTE]
 > 누락되거나 보안 관련 정보는 관리자 @yoonki1207로 연락하시면 됩니다.
+
+## 🐳 Docker 사용 배포
+### 1. jar 파일 빌드 후 서버로 옮기기.
+`scp` 명령어를 이용하여 배포할 jar 파일을 서버의 특정 리렉토리로 옮깁니다.
+```
+scp -P {PORT} {JAR_FILE_DIR}.jar {USERNAME}@{SERVER_IP}:/downloads/a-chat
+```
+
+### 2. SSH 접속
+SSH에 접속합니다.
+```
+ssh -p {SERVER_PORT} {USERNAME}@{SERVER_IP}
+```
+옮겼던 파일 위치로 이동합니다.
+```
+cd ./downloads/a-chat
+```
+
+### 3. 백그라운드 실행
+jar 파일을 백그라운드에서 실행시킵니다.
+이미 포트를 사용중이라면 `netstat -tupln` 명령어로 해당 포트를 사용하는 프로세스를 찾고 종료한 후에 jar 파일을  실행시킵니다.
+```
+nohup java -jar {JAR_FILE} &
+```
+
