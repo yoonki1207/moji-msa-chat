@@ -14,7 +14,7 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 import java.util.Base64;
 import java.util.Map;
 
-//@Component
+@Component
 @Slf4j
 public class WebSocketHandShakeInterceptor extends HttpSessionHandshakeInterceptor {
     private final AuthorizationExtractor authExtractor;
@@ -32,6 +32,11 @@ public class WebSocketHandShakeInterceptor extends HttpSessionHandshakeIntercept
 
             String token = authExtractor.extract(servletRequest, "Bearer");
             log.info("before handshake token: {}", token);
+            Object id = servletRequest.getSession().getAttribute("id");
+            log.info("before handshake id: {}", id);
+            if(id == null) {
+                throw new IllegalAccessException("유효하지 않은 유저입니다.");
+            }
             if (token == null || "".equals(token)) {
                 return true;
             }

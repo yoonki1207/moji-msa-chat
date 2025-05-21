@@ -3,6 +3,7 @@ package com.example.aunae_chat.config;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.http.server.ServerHttpRequest;
@@ -35,10 +36,18 @@ public class BearerAuthInterceptor implements HandlerInterceptor, ChannelInterce
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
 
         log.info("full message: {}", message);
+        log.info("message channel: {}", channel);
+        String value = headerAccessor.getFirstNativeHeader(AuthorizationExtractor.AUTHORIZATION);
         log.info("auth: {}", headerAccessor.getNativeHeader("Authorization"));
 
-        if (StompCommand.CONNECT.equals(headerAccessor.getCommand())) {
+        if (StompCommand.CONNECT.equals(headerAccessor.getCommand())) { // send시 header 받음
             log.info("msg: Connected");
+            String token = authExtractor.extract(value, "Bearer");
+            if (token.equals(Strings.EMPTY)) {
+                throw new RuntimeException("Token does not exist.");
+            }
+            Map<String, Object> jsonArray = getPayload(token);
+            log.info("!!!: {}", token);
         }
 
         return ChannelInterceptor.super.preSend(message, channel);
@@ -51,19 +60,21 @@ public class BearerAuthInterceptor implements HandlerInterceptor, ChannelInterce
         if (token == null || "".equals(token)) {
             return true;
         }
-        log.info(">>> token: {}", token);
+        Map<String, Object> jsonArray = getPayload(token);
+        request.setAttribute("name", jsonArray.get("name"));
+        request.setAttribute("id", jsonArray.get("id"));
+        request.setAttribute("email", jsonArray.get("email"));
+        request.setAttribute("roles", jsonArray.get("roles"));
+        return true;
+    }
+
+    public Map<String, Object> getPayload(String token) {
         String[] chunks = token.split("\\.");
         Base64.Decoder decoder = Base64.getUrlDecoder();
 
         // decode payload
         String decode = new String(decoder.decode(chunks[1]));
         JsonParser jsonParser = new BasicJsonParser();
-        Map<String, Object> jsonArray = jsonParser.parseMap(decode);
-        log.info(">>> 유저 정보: {}", jsonArray);
-        request.setAttribute("name", jsonArray.get("name"));
-        request.setAttribute("id", jsonArray.get("id"));
-        request.setAttribute("email", jsonArray.get("email"));
-        request.setAttribute("roles", jsonArray.get("roles"));
-        return true;
+        return jsonParser.parseMap(decode);
     }
 }

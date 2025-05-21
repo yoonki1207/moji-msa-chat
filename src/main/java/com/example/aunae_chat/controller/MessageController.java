@@ -1,6 +1,7 @@
 package com.example.aunae_chat.controller;
 
-import com.example.aunae_chat.data.documents.ChatMessage;
+import com.example.aunae_chat.config.AuthorizationExtractor;
+import com.example.aunae_chat.config.BearerAuthInterceptor;
 import com.example.aunae_chat.data.documents.ChatRoom;
 import com.example.aunae_chat.data.dto.ChatMessageDto;
 import com.example.aunae_chat.data.dto.NoticeMessageDto;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,18 +44,11 @@ public class MessageController {
      */
     @MessageMapping("/chat/message")
     public void enter(SimpMessageHeaderAccessor accessor, ChatMessageDto messageDto) throws JsonProcessingException {
-//        Long senderId = (Long) accessor.getSessionAttributes().get("id");
-//        String senderName = (String) accessor.getSessionAttributes().get("name");
-//
-//
-//        // set sender data with session
-//        messageDto.setSenderId(senderId);
-//        messageDto.setSender(senderName);
 
         Long roomId = messageDto.getChatRoomId();
         ChatRoom room = chatRoomService.findChatRoomByChatRoomId(roomId);
+//        room.getUsers().contains()
         Assert.notNull(room, "Room은 null일 수 없습니다.");
-        log.info("Room and message: {}, {}", room.getChatRoomId(), messageDto.getMessage());
         switch(messageDto.getMessageType()) {
             case ENTER -> {
                 sendEnterMessage(messageDto);
