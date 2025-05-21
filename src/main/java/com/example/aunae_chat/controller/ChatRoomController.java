@@ -135,6 +135,14 @@ public class ChatRoomController {
         return ResponseEntity.ok(room);
     }
 
+    @PostMapping("/room/{roomId}/leave")
+    public ResponseEntity<String> leaveChatRoom(HttpServletRequest request, @PathVariable Long roomId) {
+        Long userId = (Long) request.getAttribute("id");
+        boolean b = chatRoomService.leaveRoom(roomId, userId);
+        if(!b) return ResponseEntity.ok("요청 처리 실패");
+        return ResponseEntity.ok("채팅방을 나갔습니다.");
+    }
+
     /**
      * idx 이전의 메시지 가져오기
      * @param roomId
