@@ -3,6 +3,7 @@ package com.example.aunae_chat.config;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.http.server.ServerHttpRequest;
@@ -35,11 +36,18 @@ public class BearerAuthInterceptor implements HandlerInterceptor, ChannelInterce
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
 
         log.info("full message: {}", message);
+        log.info("message channel: {}", channel);
+        String value = headerAccessor.getFirstNativeHeader(AuthorizationExtractor.AUTHORIZATION);
         log.info("auth: {}", headerAccessor.getNativeHeader("Authorization"));
 
-        if (StompCommand.CONNECT.equals(headerAccessor.getCommand())) {
+        if (StompCommand.CONNECT.equals(headerAccessor.getCommand())) { // send시 header 받음
             log.info("msg: Connected");
-            // TODO: user validation logic. check the room has user
+            String token = authExtractor.extract(value, "Bearer");
+            if (token.equals(Strings.EMPTY)) {
+                throw new RuntimeException("Token does not exist.");
+            }
+            Map<String, Object> jsonArray = getPayload(token);
+            log.info("!!!: {}", token);
         }
 
         return ChannelInterceptor.super.preSend(message, channel);
