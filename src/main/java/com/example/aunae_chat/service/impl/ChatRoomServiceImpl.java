@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -60,6 +61,26 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             chatRoom.setUsers(users);
         }
         return chatRoomRepository.save(chatRoom);
+    }
+
+    @Override
+    public boolean leaveRoom(Long chatRoomId, Long userId) {
+        try {
+            ChatRoom room = chatRoomRepository.findByChatRoomId(chatRoomId).orElseThrow(() -> new RuntimeException("leaveRoom error"));
+            List<User> users = room.getUsers();
+            Optional<User> userO = users.stream().filter((u -> u.getUserId().equals(userId))).findFirst();
+            if(userO.isPresent()) {
+                users.remove(userO.get());
+                room.setUsers(users);
+                chatRoomRepository.save(room);
+            } else {
+                throw new RuntimeException("leaveRoom error");
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     @Override
